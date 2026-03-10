@@ -1,5 +1,5 @@
 import { Button, HText, Input, Text } from "@/src/components/common";
-import { LOGIN_SCHEMA } from "@/src/helpers/schemas";
+import { SIGNUP_SCHEMA } from "@/src/helpers/schemas";
 import { getMetrics, handleFormTextChange, validateForm } from "@/src/helpers/utils";
 import AuthLayout from "@/src/layouts/auth";
 import { authService } from "@/src/services";
@@ -9,41 +9,29 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { toast } from "sonner-native";
 import { InferType } from "yup";
 
-type ILoginSchema = InferType<typeof LOGIN_SCHEMA>;
+type ISignupSchema = InferType<typeof SIGNUP_SCHEMA>;
 
-export default function Index() {
-  const [payload, setPayload] = useState<ILoginSchema>({
+export default function Signup() {
+  const [payload, setPayload] = useState<ISignupSchema>({
     email: "",
     password: "",
   });
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleForgotPassword = async () => { }
-
-  const handleLogin = async () => {
+  const handleSignup = async () => {
     setLoading(true);
 
     try {
-      await validateForm(LOGIN_SCHEMA, payload,
+      await validateForm(SIGNUP_SCHEMA, payload,
         async () => {
-          const { data, error } = await authService.login(payload);
+          const { data, error } = await authService.signup(payload);
 
           if (error) {
-            switch (error.code) {
-              case "email_not_confirmed":
-                router.navigate({
-                  pathname: "/otp",
-                  params: { email: payload.email }
-                });
-                break;
-              default:
-
-            }
             toast.error(error.message);
             return;
           }
 
-          console.log("Data from sign-in:", JSON.stringify(data, null, 2));
+          console.log("Data from sign up:", JSON.stringify(data, null, 2));
         },
       )
     } finally {
@@ -51,8 +39,8 @@ export default function Index() {
     }
   }
 
-  const handleCreateAccount = () => {
-    router.navigate("/(auth)/signup");
+  const handleLogin = () => {
+    router.navigate("/(auth)");
   }
 
   return (
@@ -62,7 +50,7 @@ export default function Index() {
           className={`text-white capitalize text-center`}
           size="header1"
         >
-          login to your account
+          create your <HText size="header1" className={`text-[#00ff00] capitalize`}>umbrella</HText> account
         </HText>
 
         <View style={styles.formContainer}>
@@ -82,26 +70,17 @@ export default function Index() {
             value={payload.password}
             onChangeText={(e) => handleFormTextChange(setPayload, "password", e)}
           />
-
-          <View className={`flex items-end`}>
-            <TouchableOpacity onPress={handleForgotPassword}>
-              <Text size="15" className={`text-[#00ff00] underline`}>
-                Forgot Password
-              </Text>
-            </TouchableOpacity>
-          </View>
         </View>
 
         <View style={{ gap: getMetrics(15) }}>
           <Button
-            text="LOG IN"
-            onPress={handleLogin}
+            text="CREATE ACCOUNT"
+            onPress={handleSignup}
             loading={loading}
           />
-
-          <TouchableOpacity onPress={handleCreateAccount}>
+          <TouchableOpacity onPress={handleLogin}>
             <Text className={`text-white text-center`} size="15">
-              Don't have an account? <Text size="15" className={`text-[#00ff00]`}>Create One</Text>
+              Already have an account? <Text size="15" className={`text-[#00ff00]`}>Login</Text>
             </Text>
           </TouchableOpacity>
         </View>

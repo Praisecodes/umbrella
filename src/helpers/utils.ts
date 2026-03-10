@@ -1,5 +1,8 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createClient, processLock } from "@supabase/supabase-js";
 import { QueryClient } from "@tanstack/react-query";
 import { Dimensions, PixelRatio, Platform } from "react-native";
+import { EXPO_PUBLIC_SUPABASE_KEY, EXPO_PUBLIC_SUPABASE_URL } from "./env";
 
 const { width: WIDTH, height: HEIGHT } = Dimensions.get("window");
 
@@ -34,9 +37,23 @@ const queryClient = new QueryClient();
 
 const runOnLoad = async () => { }
 
+const supabase = createClient(
+  EXPO_PUBLIC_SUPABASE_URL,
+  EXPO_PUBLIC_SUPABASE_KEY,
+  {
+    auth: {
+      storage: AsyncStorage,
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: false,
+      lock: processLock,
+    },
+  }
+);
+
 export {
   getMetrics,
   queryClient,
-  runOnLoad,
-  WIDTH
+  runOnLoad, supabase, WIDTH
 };
+

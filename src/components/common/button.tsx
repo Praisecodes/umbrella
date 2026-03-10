@@ -1,6 +1,6 @@
 import { getMetrics } from '@/src/helpers/utils';
 import React from 'react';
-import { ActivityIndicator, StyleSheet, TouchableWithoutFeedback, TouchableWithoutFeedbackProps, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, TouchableOpacity, TouchableWithoutFeedbackProps, View } from 'react-native';
 import Text from "./text";
 
 interface Props extends TouchableWithoutFeedbackProps {
@@ -17,7 +17,7 @@ const Button: React.FC<Props> = (props) => {
   const { onPress, text, iconLeft, disabled, iconRight, outline, rounded, loading, ...rest } = props;
 
   return (
-    <TouchableWithoutFeedback
+    <TouchableOpacity
       {...rest}
       onPress={(e) => {
         (!disabled && !loading) && onPress?.(e);
@@ -31,12 +31,12 @@ const Button: React.FC<Props> = (props) => {
             borderWidth: getMetrics(outline ? 1 : 0),
           }
         ]}
-        className={`${!outline ? disabled ? "bg-white" : "bg-primary" : "bg-transparent"} ${(disabled || loading) && "opacity-70"} border-primary w-full flex items-center justify-center flex-row`}
+        className={`${!outline ? disabled ? "bg-white" : "bg-[#00ff00]" : "bg-transparent"} ${(disabled || loading) && "opacity-70"} border-primary w-full flex items-center justify-center flex-row`}
       >
         {(!!iconLeft && !loading) && iconLeft}
 
         {!loading && (
-          <Text size='15' className={`${!!outline ? "text-primary" : "text-[#1D1D1D]"}`}>
+          <Text size='15' className={`${!!outline ? "text-black" : "text-black"}`}>
             {text}
           </Text>
         )}
@@ -47,7 +47,7 @@ const Button: React.FC<Props> = (props) => {
 
         {(!!iconRight && !loading) && iconRight}
       </View>
-    </TouchableWithoutFeedback>
+    </TouchableOpacity>
   )
 }
 

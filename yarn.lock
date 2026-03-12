@@ -3724,10 +3724,10 @@ expo-asset@~55.0.8:
     "@expo/image-utils" "^0.8.12"
     expo-constants "~55.0.7"
 
-expo-blur@~55.0.8:
-  version "55.0.8"
-  resolved "https://registry.yarnpkg.com/expo-blur/-/expo-blur-55.0.8.tgz#809eb3b155b542697bbb47bf52972609ddd0f3dc"
-  integrity sha512-hmYhQiYFMTpHNzFaCF63jTABgnsozB5+wSEV8rCNBfNEHTdRVNFPkF+TZpbIqJpkhHfGLsKptRmR/wyZmAqREA==
+expo-blur@~55.0.9:
+  version "55.0.9"
+  resolved "https://registry.yarnpkg.com/expo-blur/-/expo-blur-55.0.9.tgz#ee577ced2336c404bb40d68287f60ddffabfa060"
+  integrity sha512-ud9YfRocdUs70H8qmQ5PdGpo+0mElFD3r9iCFLjNwRl+pATalXR+5uRsVEcxRAuSLN4RmaqXE3n0Ic0hpTsTIQ==
 
 expo-constants@~55.0.7:
   version "55.0.7"
@@ -3749,10 +3749,10 @@ expo-font@~55.0.4:
   dependencies:
     fontfaceobserver "^2.1.0"
 
-expo-glass-effect@^55.0.7:
-  version "55.0.7"
-  resolved "https://registry.yarnpkg.com/expo-glass-effect/-/expo-glass-effect-55.0.7.tgz#e8584bc078c8987dbcc468dfcdd0d82a1df8b8e3"
-  integrity sha512-G7Q9rUaEY0YC36fGE6irDljfsfvzz/y49zagARAKvSJSyQMUSrhR25WOr5LK5Cw7gQNNBEy9U1ctlr7yCay/fQ==
+expo-glass-effect@^55.0.8:
+  version "55.0.8"
+  resolved "https://registry.yarnpkg.com/expo-glass-effect/-/expo-glass-effect-55.0.8.tgz#ace0e662d7c8fc2935c9d1260e8303eb2fde0bc3"
+  integrity sha512-IvUjHb/4t6r2H/LXDjcQ4uDoHrmO2cLOvEb9leLavQ4HX5+P4LRtQrMDMlkWAn5Wo5DkLcG8+1CrQU2nqgogTA==
 
 expo-haptics@~55.0.8:
   version "55.0.8"
@@ -3796,10 +3796,10 @@ expo-modules-core@55.0.14:
   dependencies:
     invariant "^2.2.4"
 
-expo-router@~55.0.4:
-  version "55.0.4"
-  resolved "https://registry.yarnpkg.com/expo-router/-/expo-router-55.0.4.tgz#72aee1654893ebacac55cf4f875924e3affd6b24"
-  integrity sha512-wLKxc9l3IaE96UJFvwXKi2YYYjYK/VUttwAwcnljaUA2dLgDruNGmjsBS9A+g3aK3lt2/JJRu+cec7ZLJ9r6Wg==
+expo-router@~55.0.5:
+  version "55.0.5"
+  resolved "https://registry.yarnpkg.com/expo-router/-/expo-router-55.0.5.tgz#e98eed4785446c8c878230952279307e3521e8eb"
+  integrity sha512-PzN545wLtznKuVQmJXnAKB/JFjSJJIPHatsjJe4Cl6bRADr/MbWv5d2fqOpqFD/C0ZGCRHY1uBalq7mb5IQ3ZQ==
   dependencies:
     "@expo/metro-runtime" "^55.0.6"
     "@expo/schema-utils" "^55.0.2"
@@ -3811,7 +3811,7 @@ expo-router@~55.0.4:
     client-only "^0.0.1"
     debug "^4.3.4"
     escape-string-regexp "^4.0.0"
-    expo-glass-effect "^55.0.7"
+    expo-glass-effect "^55.0.8"
     expo-image "^55.0.6"
     expo-server "^55.0.6"
     expo-symbols "^55.0.5"

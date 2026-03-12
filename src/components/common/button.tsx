@@ -31,12 +31,12 @@ const Button: React.FC<Props> = (props) => {
             borderWidth: getMetrics(outline ? 1 : 0),
           }
         ]}
-        className={`${!outline ? disabled ? "bg-white" : "bg-[#00ff00]" : "bg-transparent"} ${(disabled || loading) && "opacity-70"} border-primary w-full flex items-center justify-center flex-row`}
+        className={`${!outline ? disabled ? "bg-primary-a50" : "bg-primary" : "bg-transparent"} ${(disabled || loading) && "opacity-70"} border-primary w-full flex items-center justify-center flex-row`}
       >
         {(!!iconLeft && !loading) && iconLeft}
 
         {!loading && (
-          <Text size='15' className={`${!!outline ? "text-black" : "text-black"}`}>
+          <Text size='15' className={`${!!outline ? "text-primary" : "text-white"}`}>
             {text}
           </Text>
         )}

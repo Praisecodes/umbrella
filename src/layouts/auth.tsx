@@ -12,7 +12,10 @@ interface Props {
 const AuthLayout: React.FC<Props> = ({ edges, children }) => {
   return (
     <RootLayout edges={edges}>
-      <KeyboardAvoidingView className={`flex-1`}>
+      <KeyboardAvoidingView
+        className={`flex-1`}
+        behavior='padding'
+      >
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,

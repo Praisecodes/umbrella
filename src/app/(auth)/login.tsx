@@ -52,14 +52,14 @@ export default function Login() {
   }
 
   const handleCreateAccount = () => {
-    router.navigate("/(auth)/signup");
+    router.replace("/(auth)/signup");
   }
 
   return (
     <AuthLayout>
       <View style={styles.container} className={`flex-1`}>
         <HText
-          className={`text-white capitalize text-center`}
+          className={`text-black capitalize text-center`}
           size="header1"
         >
           login to your account
@@ -85,7 +85,7 @@ export default function Login() {
 
           <View className={`flex items-end`}>
             <TouchableOpacity onPress={handleForgotPassword}>
-              <Text size="15" className={`text-[#00ff00] underline`}>
+              <Text size="15" className={`text-primary underline`}>
                 Forgot Password
               </Text>
             </TouchableOpacity>
@@ -100,8 +100,8 @@ export default function Login() {
           />
 
           <TouchableOpacity onPress={handleCreateAccount}>
-            <Text className={`text-white text-center`} size="15">
-              Don't have an account? <Text size="15" className={`text-[#00ff00]`}>Create One</Text>
+            <Text className={`text-dark text-center`} size="15">
+              Don't have an account? <Text size="15" className={`text-primary`}>Create One</Text>
             </Text>
           </TouchableOpacity>
         </View>

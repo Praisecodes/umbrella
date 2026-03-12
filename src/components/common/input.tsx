@@ -8,11 +8,10 @@ interface Props extends TextInputProps {
   label?: string;
   iconRight?: React.ReactNode;
   iconLeft?: React.ReactNode;
-  alt?: boolean;
 }
 
 const Input: React.FC<Props> = (props) => {
-  const { secureTextEntry, iconLeft, iconRight, label, alt, ...rest } = props;
+  const { secureTextEntry, iconLeft, iconRight, label, ...rest } = props;
   const [textHidden, setTextHidden] = useState<boolean>(secureTextEntry ?? false);
 
   const toggleInputVisibility = () => setTextHidden(!textHidden);
@@ -20,7 +19,7 @@ const Input: React.FC<Props> = (props) => {
   return (
     <View style={[{ gap: getMetrics(5) }]}>
       {label && (
-        <Text size='15' className={`pl-3 text-white`}>
+        <Text size='15' className={`pl-2 text-dark`}>
           {label}
         </Text>
       )}
@@ -31,19 +30,19 @@ const Input: React.FC<Props> = (props) => {
           borderRadius: getMetrics(5),
           gap: getMetrics(10),
         }}
-        className={`flex ${alt ? "bg-[#101E36]" : "bg-[#2B3A55]"} ${rest.readOnly && "opacity-60"} flex-row items-center`}
+        className={`flex border border-dark-a50 ${rest.readOnly && "opacity-60"} flex-row items-center`}
       >
         {!!iconLeft && iconLeft}
 
         <TextInput
           {...rest}
           secureTextEntry={textHidden}
-          className={`flex-1 items-center font-avenir text-white flex`}
+          className={`flex-1 items-center font-avenir text-black flex`}
           style={{
             height: !!rest.multiline ? getMetrics(97) : getMetrics(50),
             fontSize: getMetrics(15),
           }}
-          placeholderTextColor={'#868484'}
+          placeholderTextColor={'#6B728080'}
           placeholder={secureTextEntry ? (textHidden ? "********" : "Password") : rest.placeholder}
         />
 
@@ -51,10 +50,10 @@ const Input: React.FC<Props> = (props) => {
           <TouchableOpacity onPress={toggleInputVisibility}>
             {textHidden ?
               (<EyeOutlineIcon
-                color={'#fff'}
+                color={'#6B7280'}
               />) :
               (<EyeCloseOutlineIcon
-                color={'#fff'}
+                color={'#6B7280'}
               />)}
           </TouchableOpacity>
         )}

@@ -40,17 +40,17 @@ export default function Signup() {
   }
 
   const handleLogin = () => {
-    router.navigate("/(auth)");
+    router.replace("/(auth)/login");
   }
 
   return (
     <AuthLayout>
       <View style={styles.container} className={`flex-1`}>
         <HText
-          className={`text-white capitalize text-center`}
+          className={`text-black capitalize text-center`}
           size="header1"
         >
-          create your <HText size="header1" className={`text-[#00ff00] capitalize`}>umbrella</HText> account
+          create your <HText size="header1" className={`text-primary capitalize`}>umbrella</HText> account
         </HText>
 
         <View style={styles.formContainer}>
@@ -79,8 +79,8 @@ export default function Signup() {
             loading={loading}
           />
           <TouchableOpacity onPress={handleLogin}>
-            <Text className={`text-white text-center`} size="15">
-              Already have an account? <Text size="15" className={`text-[#00ff00]`}>Login</Text>
+            <Text className={`text-dark text-center`} size="15">
+              Already have an account? <Text size="15" className={`text-primary`}>Login</Text>
             </Text>
           </TouchableOpacity>
         </View>

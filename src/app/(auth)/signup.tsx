@@ -32,6 +32,10 @@ export default function Signup() {
           }
 
           console.log("Data from sign up:", JSON.stringify(data, null, 2));
+          router.navigate({
+            pathname: "/otp",
+            params: { email: payload.email }
+          });
         },
       )
     } finally {

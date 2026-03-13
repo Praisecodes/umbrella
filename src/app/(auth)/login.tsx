@@ -1,6 +1,6 @@
 import { Button, HText, Input, Text } from "@/src/components/common";
 import { LOGIN_SCHEMA } from "@/src/helpers/schemas";
-import { getMetrics, handleFormTextChange, validateForm } from "@/src/helpers/utils";
+import { getMetrics, handleFormTextChange, supabase, validateForm } from "@/src/helpers/utils";
 import AuthLayout from "@/src/layouts/auth";
 import { authService } from "@/src/services";
 import { router } from "expo-router";
@@ -31,6 +31,12 @@ export default function Login() {
           if (error) {
             switch (error.code) {
               case "email_not_confirmed":
+                const { data, error } = await supabase.auth.signInWithOtp(payload);
+                if (error) {
+                  toast.error(error.message);
+                  return;
+                }
+
                 router.navigate({
                   pathname: "/otp",
                   params: { email: payload.email }
@@ -44,6 +50,7 @@ export default function Login() {
           }
 
           console.log("Data from sign-in:", JSON.stringify(data, null, 2));
+          router.replace("/(tabs)/home");
         },
       )
     } finally {

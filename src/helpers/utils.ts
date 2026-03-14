@@ -1,7 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createClient, processLock } from "@supabase/supabase-js";
 import { QueryClient } from "@tanstack/react-query";
+import { Dispatch, SetStateAction } from "react";
 import { Dimensions, PixelRatio, Platform } from "react-native";
+import { toast } from "sonner-native";
+import { AnyObject, ObjectSchema, ValidationError } from "yup";
 import { EXPO_PUBLIC_SUPABASE_KEY, EXPO_PUBLIC_SUPABASE_URL } from "./env";
 
 const { width: WIDTH, height: HEIGHT } = Dimensions.get("window");
@@ -51,9 +54,47 @@ const supabase = createClient(
   }
 );
 
+const validateForm = async <T extends AnyObject>(
+  schema: ObjectSchema<T>,
+  payload: T,
+  successCallback: () => Promise<void>,
+  errorCallback?: (payload: T) => Promise<void>,
+) => {
+  try {
+    await schema.validate(payload, { abortEarly: false });
+
+    await successCallback();
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      toast.error(error.errors.join("\n"));
+      await errorCallback?.(payload);
+    } else {
+      throw error;
+    }
+  }
+}
+
+const handleFormTextChange = <
+  T extends object,
+  K extends keyof T
+>(
+  setPayload: Dispatch<SetStateAction<T>>,
+  key: K,
+  value: T[K],
+) => {
+  setPayload(prev => ({
+    ...prev,
+    [key]: value
+  }));
+}
+
 export {
   getMetrics,
+  handleFormTextChange,
   queryClient,
-  runOnLoad, supabase, WIDTH
+  runOnLoad,
+  supabase,
+  validateForm,
+  WIDTH
 };
 

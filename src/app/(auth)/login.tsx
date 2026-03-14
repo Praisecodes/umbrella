@@ -28,8 +28,9 @@ export default function Login() {
         async () => {
           const { data, error } = await authService.login(payload);
 
-          if (error) {
-            switch (error.code) {
+          if (!!error) {
+            const err = error;
+            switch (err.code) {
               case "email_not_confirmed":
                 const { data, error } = await supabase.auth.signInWithOtp(payload);
                 if (error) {
@@ -43,9 +44,9 @@ export default function Login() {
                 });
                 break;
               default:
-
             }
-            toast.error(error.message);
+
+            toast.error(err.message);
             return;
           }
 

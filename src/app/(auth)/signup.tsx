@@ -39,14 +39,12 @@ export default function Signup() {
           const user = data.user;
 
           if (user) {
-            const { firstName, lastName, username, ...rest } = payload;
+            const { email, password, ...rest } = payload;
             const { error: profileError } = await supabase
               .from("profile")
               .insert({
                 id: user.id,
-                username,
-                firstName,
-                lastName
+                ...rest
               });
 
             if (profileError) {

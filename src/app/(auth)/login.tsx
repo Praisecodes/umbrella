@@ -50,7 +50,7 @@ export default function Login() {
             return;
           }
 
-          console.log("Data from sign-in:", JSON.stringify(data, null, 2));
+          console.log("Data from sign-in:", JSON.stringify(data.user, null, 2));
           router.replace("/(tabs)/home");
         },
       )

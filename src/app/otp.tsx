@@ -33,7 +33,7 @@ const Otp = () => {
 
       // Use the data returned, here
 
-      router.replace("/(tabs)/home");
+      router.dismissTo("/(auth)/login");
     } catch (error) {
       if (error instanceof ValidationError) {
         toast.error(error.errors.join("\n"));

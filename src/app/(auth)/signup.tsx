@@ -1,6 +1,6 @@
 import { Button, HText, Input, Text } from "@/src/components/common";
 import { SIGNUP_SCHEMA } from "@/src/helpers/schemas";
-import { getMetrics, handleFormTextChange, validateForm } from "@/src/helpers/utils";
+import { getMetrics, handleFormTextChange, supabase, validateForm } from "@/src/helpers/utils";
 import AuthLayout from "@/src/layouts/auth";
 import { authService } from "@/src/services";
 import { router } from "expo-router";
@@ -15,6 +15,9 @@ export default function Signup() {
   const [payload, setPayload] = useState<ISignupSchema>({
     email: "",
     password: "",
+    firstName: "",
+    lastName: "",
+    username: ""
   });
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -27,15 +30,37 @@ export default function Signup() {
           const { data, error } = await authService.signup(payload);
 
           if (error) {
+            console.log("Signup Error:", JSON.stringify(error, null, 2));
             toast.error(error.message);
             return;
           }
 
-          console.log("Data from sign up:", JSON.stringify(data, null, 2));
-          router.navigate({
-            pathname: "/otp",
-            params: { email: payload.email }
-          });
+          // console.log("Data from sign up:", JSON.stringify(data, null, 2));
+          const user = data.user;
+
+          if (user) {
+            const { firstName, lastName, username, ...rest } = payload;
+            const { error: profileError } = await supabase
+              .from("profile")
+              .insert({
+                id: user.id,
+                username,
+                firstName,
+                lastName
+              });
+
+            if (profileError) {
+              console.log("Profile Error:", JSON.stringify(profileError, null, 2));
+              toast.error(profileError.message);
+              return;
+            }
+            router.navigate({
+              pathname: "/otp",
+              params: { email: payload.email }
+            });
+          } else {
+            toast.error("There's been an error creating your account.\nPlease try again");
+          }
         },
       )
     } finally {
@@ -65,6 +90,28 @@ export default function Signup() {
             onChangeText={(e) => handleFormTextChange(setPayload, "email", e)}
             keyboardType="email-address"
             autoCapitalize="none"
+          />
+
+          <Input
+            label="First Name"
+            placeholder="Enter your first name"
+            value={payload.firstName}
+            onChangeText={(e) => handleFormTextChange(setPayload, "firstName", e)}
+          />
+
+          <Input
+            label="Last Name"
+            placeholder="Enter your last name"
+            value={payload.lastName}
+            onChangeText={(e) => handleFormTextChange(setPayload, "lastName", e)}
+          />
+
+          <Input
+            label="Username"
+            placeholder="Choose a username"
+            value={payload.username}
+            onChangeText={(e) => handleFormTextChange(setPayload, "username", e)}
+            autoCapitalize={"none"}
           />
 
           <Input

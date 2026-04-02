@@ -7,7 +7,7 @@ import { Dimensions, PixelRatio, Platform } from "react-native";
 import { toast } from "sonner-native";
 import { AnyObject, ObjectSchema, ValidationError } from "yup";
 import { getData } from "../stores/async_storage";
-import { useAppSettings } from "../stores/zustand";
+import { useAppSettings, useUserStore } from "../stores/zustand";
 import { EXPO_PUBLIC_ONBOARDED_KEY, EXPO_PUBLIC_SUPABASE_KEY, EXPO_PUBLIC_SUPABASE_URL } from "./env";
 
 const { width: WIDTH, height: HEIGHT } = Dimensions.get("window");
@@ -41,13 +41,6 @@ const getMetrics = (size: number) =>
 
 const queryClient = new QueryClient();
 
-const runOnLoad = async () => {
-  const { setOnboarded } = useAppSettings.getState();
-  setOnboarded(!!await getData(EXPO_PUBLIC_ONBOARDED_KEY));
-
-  SplashScreen.hideAsync();
-}
-
 const supabase = createClient(
   EXPO_PUBLIC_SUPABASE_URL,
   EXPO_PUBLIC_SUPABASE_KEY,
@@ -61,6 +54,28 @@ const supabase = createClient(
     },
   }
 );
+
+const runOnLoad = async () => {
+  const { setOnboarded } = useAppSettings.getState();
+  const { setUser, setSession } = useUserStore.getState();
+
+  setOnboarded(!!await getData(EXPO_PUBLIC_ONBOARDED_KEY));
+  const { data, error } = await supabase.auth.getSession();
+
+  if (error) {
+    toast.error(error.message);
+  } else {
+    const user = data.session?.user.user_metadata;
+    const session = data.session;
+
+    if (!!user && !!session) {
+      setUser(user as IUser);
+      setSession(session);
+    }
+  }
+
+  SplashScreen.hideAsync();
+}
 
 const validateForm = async <T extends AnyObject>(
   schema: ObjectSchema<T>,

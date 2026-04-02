@@ -13,7 +13,7 @@ import { InferType } from "yup";
 type ILoginSchema = InferType<typeof LOGIN_SCHEMA>;
 
 export default function Login() {
-  const { user, setUser } = useUserStore(state => state);
+  const { setSession, setUser } = useUserStore(state => state);
   const [payload, setPayload] = useState<ILoginSchema>({
     email: "",
     password: "",
@@ -41,7 +41,7 @@ export default function Login() {
                 }
 
                 router.replace({
-                  pathname: "/otp",
+                  pathname: "/(auth)/otp",
                   params: { email: payload.email }
                 });
                 break;
@@ -52,9 +52,8 @@ export default function Login() {
             return;
           }
 
-          // console.log("Data from sign-in:", JSON.stringify(data.user.user_metadata, null, 2));
           setUser(data.user.user_metadata as IUser);
-          router.replace("/(tabs)/home");
+          setSession(data.session);
         },
       )
     } finally {

@@ -3,16 +3,16 @@ import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { toast } from 'sonner-native';
 import { string, ValidationError } from 'yup';
-import { Button, HText, Input, Text } from '../components/common';
-import { getMetrics, supabase } from '../helpers/utils';
-import AuthLayout from '../layouts/auth';
-import { useUserStore } from '../stores/zustand';
+import { Button, HText, Input, Text } from '../../components/common';
+import { getMetrics, supabase } from '../../helpers/utils';
+import AuthLayout from '../../layouts/auth';
+import { useUserStore } from '../../stores/zustand';
 
 const Otp = () => {
   const { email } = useLocalSearchParams();
   const [otp, setOtp] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const { setUser } = useUserStore();
+  const { setUser, setSession } = useUserStore();
 
   const handleVerfifyOtp = async () => {
     try {
@@ -35,8 +35,11 @@ const Otp = () => {
 
       // Use the data returned, here
       const user = data.user?.user_metadata;
-      if (!!user) {
+      const session = data.session;
+
+      if (!!user && !!session) {
         setUser(user as IUser);
+        setSession(session);
         router.replace("/(tabs)/home");
       } else {
         router.replace("/(auth)/login");

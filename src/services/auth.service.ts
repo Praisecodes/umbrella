@@ -19,6 +19,14 @@ class AuthService {
   login = async (payload: ILoginPayload) => {
     return await supabase.auth.signInWithPassword(payload);
   }
+
+  getSession = async () => {
+    return await supabase.auth.getSession();
+  }
+
+  signOut = async () => {
+    return await supabase.auth.signOut();
+  }
 }
 
 const authService = new AuthService();

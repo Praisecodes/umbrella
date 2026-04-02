@@ -36,7 +36,7 @@ export default function Signup() {
           }
 
           router.replace({
-            pathname: "/otp",
+            pathname: "/(auth)/otp",
             params: { email: payload.email }
           });
         },

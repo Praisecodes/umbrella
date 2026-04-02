@@ -1,11 +1,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createClient, processLock } from "@supabase/supabase-js";
 import { QueryClient } from "@tanstack/react-query";
+import { SplashScreen } from "expo-router";
 import { Dispatch, SetStateAction } from "react";
 import { Dimensions, PixelRatio, Platform } from "react-native";
 import { toast } from "sonner-native";
 import { AnyObject, ObjectSchema, ValidationError } from "yup";
-import { EXPO_PUBLIC_SUPABASE_KEY, EXPO_PUBLIC_SUPABASE_URL } from "./env";
+import { getData } from "../stores/async_storage";
+import { useAppSettings } from "../stores/zustand";
+import { EXPO_PUBLIC_ONBOARDED_KEY, EXPO_PUBLIC_SUPABASE_KEY, EXPO_PUBLIC_SUPABASE_URL } from "./env";
 
 const { width: WIDTH, height: HEIGHT } = Dimensions.get("window");
 
@@ -38,7 +41,12 @@ const getMetrics = (size: number) =>
 
 const queryClient = new QueryClient();
 
-const runOnLoad = async () => { }
+const runOnLoad = async () => {
+  const { setOnboarded } = useAppSettings.getState();
+  setOnboarded(!!await getData(EXPO_PUBLIC_ONBOARDED_KEY));
+
+  SplashScreen.hideAsync();
+}
 
 const supabase = createClient(
   EXPO_PUBLIC_SUPABASE_URL,

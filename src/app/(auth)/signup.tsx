@@ -35,7 +35,7 @@ export default function Signup() {
             return;
           }
 
-          router.navigate({
+          router.replace({
             pathname: "/otp",
             params: { email: payload.email }
           });

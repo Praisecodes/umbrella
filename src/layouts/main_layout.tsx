@@ -20,7 +20,7 @@ const MainLayout: React.FC<Props> = ({ children, noPadding, edges }) => {
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
-            paddingHorizontal: noPadding ? 0 : getMetrics(20),
+            paddingHorizontal: noPadding ? 0 : getMetrics(16),
           }}
         >
           {children}

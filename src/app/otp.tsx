@@ -39,7 +39,7 @@ const Otp = () => {
         setUser(user as IUser);
         router.replace("/(tabs)/home");
       } else {
-        router.dismissTo("/(auth)/login");
+        router.replace("/(auth)/login");
       }
     } catch (error) {
       if (error instanceof ValidationError) {

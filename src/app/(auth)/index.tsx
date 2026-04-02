@@ -1,8 +1,11 @@
 import { Button, HText, Text } from "@/src/components/common";
+import { EXPO_PUBLIC_ONBOARDED_KEY } from "@/src/helpers/env";
 import { getMetrics, WIDTH } from "@/src/helpers/utils";
 import RootLayout from "@/src/layouts/root_layout";
+import { storeData } from "@/src/stores/async_storage";
+import { useAppSettings } from "@/src/stores/zustand";
 import { Image } from "expo-image";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import { useRef, useState } from "react";
 import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, { useAnimatedStyle, withTiming } from "react-native-reanimated";
@@ -10,9 +13,31 @@ import Animated, { useAnimatedStyle, withTiming } from "react-native-reanimated"
 const INDICATOR_WIDTH = getMetrics(8);
 const INDICATOR_WIDTH_EXPANDED = getMetrics(32);
 
+const Indicator = ({ isActive }: { isActive: boolean }) => {
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      width: withTiming(
+        isActive ? INDICATOR_WIDTH_EXPANDED : INDICATOR_WIDTH,
+        { duration: 250 }
+      ),
+    };
+  });
+
+  return (
+    <Animated.View
+      className={`${isActive ? "bg-primary" : "bg-primary-a10"} rounded-full`}
+      style={[
+        animatedStyle,
+        { height: getMetrics(8) }
+      ]}
+    />
+  );
+};
+
 export default function Index() {
   const flatListRef = useRef<FlatList>(null);
   const [screenFocused, setScreenFocused] = useState<number>(0);
+  const { onboarded } = useAppSettings();
 
   const CAROUSEL = [
     {
@@ -34,27 +59,37 @@ export default function Index() {
 
   const handleCreateAccountPressed = async () => {
     if (screenFocused === 2) {
-      router.navigate("/(auth)/signup");
+      if (await storeData(EXPO_PUBLIC_ONBOARDED_KEY, "true")) {
+        router.replace("/(auth)/signup");
+      }
     } else {
       flatListRef.current?.scrollToIndex({ index: screenFocused + 1, animated: true });
     }
   }
   const handleLoginPressed = async () => {
     if (screenFocused === 2) {
-      router.navigate("/(auth)/login");
+      if (await storeData(EXPO_PUBLIC_ONBOARDED_KEY, "true")) {
+        router.replace("/(auth)/login");
+      }
+    } else if (screenFocused === 0) {
+      handleSkipPressed();
     } else {
       flatListRef.current?.scrollToIndex({ index: screenFocused - 1, animated: true });
     }
   }
 
-  const handleSkipPressed = () => {
-    router.navigate("/(auth)/login");
+  const handleSkipPressed = async () => {
+    if (await storeData(EXPO_PUBLIC_ONBOARDED_KEY, "true")) {
+      router.replace("/(auth)/login");
+    }
   }
+
+  if (onboarded) return <Redirect href={"/(auth)/login"} />
 
   return (
     <RootLayout>
       <View style={styles.container} className={`flex-1`}>
-        <View className={`items-end justify-end`} style={{ paddingHorizontal: getMetrics(20) }}>
+        <View className={`items-end ${screenFocused !== 0 ? "opacity-100" : "opacity-0"} justify-end`} style={{ paddingHorizontal: getMetrics(20) }}>
           <TouchableOpacity onPress={handleSkipPressed}>
             <Text className={`text-dark`}>
               Skip
@@ -68,6 +103,7 @@ export default function Index() {
           contentContainerStyle={{
             flexGrow: 1,
           }}
+          showsHorizontalScrollIndicator={false}
           data={CAROUSEL}
           keyExtractor={(_, index) => index.toString()}
           pagingEnabled
@@ -110,31 +146,12 @@ export default function Index() {
             gap: getMetrics(5),
           }}
         >
-          {CAROUSEL.map((_, index) => {
-            const animatedStyle = useAnimatedStyle(() => {
-              const isActive = screenFocused === index;
-
-              return {
-                width: withTiming(
-                  isActive ? INDICATOR_WIDTH_EXPANDED : INDICATOR_WIDTH,
-                  { duration: 250 }
-                ),
-              };
-            });
-
-            return (
-              <Animated.View
-                key={index}
-                className={`${screenFocused === index ? "bg-primary" : "bg-primary-a10"} rounded-full`}
-                style={[
-                  animatedStyle,
-                  {
-                    height: getMetrics(8),
-                  }
-                ]}
-              />
-            )
-          })}
+          {CAROUSEL.map((_, index) => (
+            <Indicator
+              key={index}
+              isActive={screenFocused === index}
+            />
+          ))}
         </View>
 
         <View
@@ -148,13 +165,11 @@ export default function Index() {
             onPress={handleCreateAccountPressed}
           />
 
-          {screenFocused !== 0 && (
-            <Button
-              text={screenFocused !== 2 ? "Back" : "Log Into Your Account"}
-              outline
-              onPress={handleLoginPressed}
-            />
-          )}
+          <Button
+            text={screenFocused === 0 ? "Skip" : screenFocused !== 2 ? "Back" : "Log Into Your Account"}
+            outline
+            onPress={handleLoginPressed}
+          />
         </View>
       </View>
     </RootLayout>
@@ -166,4 +181,4 @@ const styles = StyleSheet.create({
     gap: getMetrics(25),
     paddingTop: getMetrics(15),
   }
-})
+});

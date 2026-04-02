@@ -40,7 +40,7 @@ export default function Login() {
                   return;
                 }
 
-                router.navigate({
+                router.replace({
                   pathname: "/otp",
                   params: { email: payload.email }
                 });

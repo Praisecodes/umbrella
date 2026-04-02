@@ -3,6 +3,7 @@ import { LOGIN_SCHEMA } from "@/src/helpers/schemas";
 import { getMetrics, handleFormTextChange, supabase, validateForm } from "@/src/helpers/utils";
 import AuthLayout from "@/src/layouts/auth";
 import { authService } from "@/src/services";
+import { useUserStore } from "@/src/stores/zustand";
 import { router } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
@@ -12,6 +13,7 @@ import { InferType } from "yup";
 type ILoginSchema = InferType<typeof LOGIN_SCHEMA>;
 
 export default function Login() {
+  const { user, setUser } = useUserStore(state => state);
   const [payload, setPayload] = useState<ILoginSchema>({
     email: "",
     password: "",
@@ -32,7 +34,7 @@ export default function Login() {
             const err = error;
             switch (err.code) {
               case "email_not_confirmed":
-                const { data, error } = await supabase.auth.signInWithOtp(payload);
+                const { error } = await supabase.auth.signInWithOtp(payload);
                 if (error) {
                   toast.error(error.message);
                   return;
@@ -50,7 +52,8 @@ export default function Login() {
             return;
           }
 
-          console.log("Data from sign-in:", JSON.stringify(data.user, null, 2));
+          // console.log("Data from sign-in:", JSON.stringify(data.user.user_metadata, null, 2));
+          setUser(data.user.user_metadata as IUser);
           router.replace("/(tabs)/home");
         },
       )

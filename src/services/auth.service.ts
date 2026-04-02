@@ -7,7 +7,13 @@ type ISignupPayload = InferType<typeof SIGNUP_SCHEMA>;
 
 class AuthService {
   signup = async (payload: ISignupPayload) => {
-    return await supabase.auth.signUp(payload);
+    const { email, password, ...rest } = payload;
+    return await supabase.auth.signUp({
+      email, password,
+      options: {
+        data: { ...rest }
+      }
+    });
   }
 
   login = async (payload: ILoginPayload) => {

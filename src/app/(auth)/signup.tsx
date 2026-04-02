@@ -1,6 +1,6 @@
 import { Button, HText, Input, Text } from "@/src/components/common";
 import { SIGNUP_SCHEMA } from "@/src/helpers/schemas";
-import { getMetrics, handleFormTextChange, supabase, validateForm } from "@/src/helpers/utils";
+import { getMetrics, handleFormTextChange, validateForm } from "@/src/helpers/utils";
 import AuthLayout from "@/src/layouts/auth";
 import { authService } from "@/src/services";
 import { router } from "expo-router";
@@ -35,30 +35,10 @@ export default function Signup() {
             return;
           }
 
-          // console.log("Data from sign up:", JSON.stringify(data, null, 2));
-          const user = data.user;
-
-          if (user) {
-            const { email, password, ...rest } = payload;
-            const { error: profileError } = await supabase
-              .from("profile")
-              .insert({
-                id: user.id,
-                ...rest
-              });
-
-            if (profileError) {
-              console.log("Profile Error:", JSON.stringify(profileError, null, 2));
-              toast.error(profileError.message);
-              return;
-            }
-            router.navigate({
-              pathname: "/otp",
-              params: { email: payload.email }
-            });
-          } else {
-            toast.error("There's been an error creating your account.\nPlease try again");
-          }
+          router.navigate({
+            pathname: "/otp",
+            params: { email: payload.email }
+          });
         },
       )
     } finally {

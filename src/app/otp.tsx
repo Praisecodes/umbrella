@@ -6,11 +6,13 @@ import { string, ValidationError } from 'yup';
 import { Button, HText, Input, Text } from '../components/common';
 import { getMetrics, supabase } from '../helpers/utils';
 import AuthLayout from '../layouts/auth';
+import { useUserStore } from '../stores/zustand';
 
 const Otp = () => {
   const { email } = useLocalSearchParams();
   const [otp, setOtp] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const { setUser } = useUserStore();
 
   const handleVerfifyOtp = async () => {
     try {
@@ -32,8 +34,13 @@ const Otp = () => {
       }
 
       // Use the data returned, here
-
-      router.dismissTo("/(auth)/login");
+      const user = data.user?.user_metadata;
+      if (!!user) {
+        setUser(user as IUser);
+        router.replace("/(tabs)/home");
+      } else {
+        router.dismissTo("/(auth)/login");
+      }
     } catch (error) {
       if (error instanceof ValidationError) {
         toast.error(error.errors.join("\n"));

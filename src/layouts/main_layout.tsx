@@ -1,35 +1,49 @@
 import React from 'react';
-import { KeyboardAvoidingView, ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { Edges } from 'react-native-safe-area-context';
 import { getMetrics } from '../helpers/utils';
 import RootLayout from './root_layout';
 
 interface Props {
   children: React.ReactNode;
-  noPadding?: boolean;
   edges?: Edges;
+  scrollView?: boolean;
+  noPadding?: boolean;
 }
 
-const MainLayout: React.FC<Props> = ({ children, noPadding, edges }) => {
+const MainLayout: React.FC<Props> = ({ children, edges, noPadding, scrollView = true }) => {
   return (
     <RootLayout edges={edges}>
-      <KeyboardAvoidingView
-        className={`flex-1`}
-        behavior='padding'
-      >
+      {scrollView && (
         <ScrollView
-          contentContainerStyle={{
+          contentContainerStyle={[styles.container, {
+            paddingBottom: getMetrics(20),
             flexGrow: 1,
-            paddingHorizontal: noPadding ? 0 : getMetrics(16),
-          }}
-        >
-          {children}
-        </ScrollView>
-      </KeyboardAvoidingView>
+            ...(noPadding && ({ paddingHorizontal: 0 })),
+          }]}
+          children={children}
+        />
+      )}
+
+      {!scrollView && (
+        <View
+          style={[styles.container, {
+            flex: 1,
+            ...(noPadding && ({ paddingHorizontal: 0 })),
+            paddingBottom: 0,
+          }]}
+          children={children}
+        />
+      )}
     </RootLayout>
   )
 }
 
 export default MainLayout;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: getMetrics(16),
+    paddingBottom: getMetrics(20),
+  }
+});

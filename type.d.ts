@@ -7,7 +7,6 @@ interface IUser {
   emailVerified: boolean,
   createdAt: string,
   updatedAt: string,
-  clients: IClient[],
 }
 
 interface IClient { }

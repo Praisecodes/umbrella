@@ -1,7 +1,9 @@
 import authService from "./auth.service";
+import clientsService from "./clients.service";
 import otpService from "./otp.service";
 import userService from "./user.service";
 
 export {
-  authService, otpService, userService
+  authService, clientsService, otpService, userService
 };
+

@@ -43,6 +43,8 @@ ApiClient.interceptors.response.use(
       setUser(response.data.data.user);
     }
 
+    console.log("Success Response Data:", JSON.stringify(response.data.data, null, 2));
+
     return response;
   },
   (error: AxiosError) => {

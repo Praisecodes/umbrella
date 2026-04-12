@@ -1,5 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createClient, processLock } from "@supabase/supabase-js";
 import { QueryClient } from "@tanstack/react-query";
 import { SplashScreen } from "expo-router";
 import { Dispatch, SetStateAction } from "react";
@@ -10,7 +8,7 @@ import { userService } from "../services";
 import { getData } from "../stores/async_storage";
 import { getSecureData } from "../stores/expo_secure_store";
 import { useAppSettings } from "../stores/zustand";
-import { EXPO_PUBLIC_ACCESS_TOKEN_KEY, EXPO_PUBLIC_ONBOARDED_KEY, EXPO_PUBLIC_SUPABASE_KEY, EXPO_PUBLIC_SUPABASE_URL } from "./env";
+import { EXPO_PUBLIC_ACCESS_TOKEN_KEY, EXPO_PUBLIC_ONBOARDED_KEY } from "./env";
 
 const { width: WIDTH, height: HEIGHT } = Dimensions.get("window");
 
@@ -42,20 +40,6 @@ const getMetrics = (size: number) =>
   Math.round(PixelRatio.roundToNearestPixel(scale(size)));
 
 const queryClient = new QueryClient();
-
-const supabase = createClient(
-  EXPO_PUBLIC_SUPABASE_URL,
-  EXPO_PUBLIC_SUPABASE_KEY,
-  {
-    auth: {
-      storage: AsyncStorage,
-      autoRefreshToken: true,
-      persistSession: true,
-      detectSessionInUrl: false,
-      lock: processLock,
-    },
-  }
-);
 
 const runOnLoad = async () => {
   const { setOnboarded } = useAppSettings.getState();
@@ -113,7 +97,6 @@ export {
   handleFormTextChange,
   queryClient,
   runOnLoad,
-  supabase,
   validateForm,
   WIDTH
 };

@@ -3,10 +3,12 @@ import { SIGNUP_SCHEMA } from "@/src/helpers/schemas";
 import { getMetrics, handleFormTextChange, validateForm } from "@/src/helpers/utils";
 import AuthLayout from "@/src/layouts/auth";
 import { authService } from "@/src/services";
+import { OTPTypes } from "@/types";
+import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { router } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { toast } from "sonner-native";
 import { InferType } from "yup";
 
 type ISignupSchema = InferType<typeof SIGNUP_SCHEMA>;
@@ -19,31 +21,31 @@ export default function Signup() {
     lastName: "",
     username: ""
   });
-  const [loading, setLoading] = useState<boolean>(false);
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: authService.signup,
+    onSuccess: (_, { email }) => {
+      router.replace({
+        pathname: "/(auth)/otp",
+        params: { email, type: OTPTypes.VERIFY }
+      });
+    },
+    onError: (error: AxiosError, { email, password }) => {
+      if (error?.response?.status === 409) {
+        router.replace({
+          pathname: "/(auth)/login",
+          params: { email, password }
+        });
+      }
+    }
+  });
 
   const handleSignup = async () => {
-    setLoading(true);
-
-    try {
-      await validateForm(SIGNUP_SCHEMA, payload,
-        async () => {
-          const { data, error } = await authService.signup(payload);
-
-          if (error) {
-            console.log("Signup Error:", JSON.stringify(error, null, 2));
-            toast.error(error.message);
-            return;
-          }
-
-          router.replace({
-            pathname: "/(auth)/otp",
-            params: { email: payload.email }
-          });
-        },
-      )
-    } finally {
-      setLoading(false);
-    }
+    await validateForm(SIGNUP_SCHEMA, payload,
+      async () => {
+        mutate(payload);
+      },
+    )
   }
 
   const handleLogin = () => {
@@ -105,7 +107,7 @@ export default function Signup() {
           <Button
             text="CREATE ACCOUNT"
             onPress={handleSignup}
-            loading={loading}
+            loading={isPending}
           />
           <TouchableOpacity onPress={handleLogin}>
             <Text className={`text-dark text-center`} size="15">

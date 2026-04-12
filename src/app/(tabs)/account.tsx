@@ -1,26 +1,19 @@
 import { Button } from '@/src/components/common';
+import { EXPO_PUBLIC_ACCESS_TOKEN_KEY, EXPO_PUBLIC_REFRESH_TOKEN_KEY } from '@/src/helpers/env';
 import { getMetrics } from '@/src/helpers/utils';
 import MainLayout from '@/src/layouts/main_layout';
-import { authService } from '@/src/services';
+import { removeSecureData } from '@/src/stores/expo_secure_store';
 import { useUserStore } from '@/src/stores/zustand';
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { toast } from 'sonner-native';
 
 const Account = () => {
   const { clearUser } = useUserStore();
-  const [loading, setLoading] = useState<boolean>(false);
 
   const handleLogout = async () => {
-    setLoading(true);
-    const { error } = await authService.signOut();
-    if (error) {
-      toast.error("Error Signin Out");
-    } else {
+    if (await removeSecureData(EXPO_PUBLIC_ACCESS_TOKEN_KEY) && await removeSecureData(EXPO_PUBLIC_REFRESH_TOKEN_KEY)) {
       clearUser();
     }
-
-    setLoading(false);
   }
 
   return (
@@ -29,7 +22,6 @@ const Account = () => {
         <Button
           onPress={handleLogout}
           text='Logout'
-          loading={loading}
         />
       </View>
     </MainLayout>

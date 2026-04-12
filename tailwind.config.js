@@ -14,6 +14,7 @@ module.exports = {
       "primary-a3": '#4338CA08',
       "primary-a5": "#4338CA0D",
       "primary-a10": "#4338CA1A",
+      "primary-a15": "#4338CA26",
       "primary-a30": "#4338CA4D",
       "primary-a40": "#4338CA66",
       "primary-a50": "#4338CA80",

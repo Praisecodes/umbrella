@@ -1,31 +1,24 @@
 import { InferType } from "yup";
-import { LOGIN_SCHEMA, SIGNUP_SCHEMA } from "../helpers/schemas";
-import { supabase } from "../helpers/utils";
+import ApiClient from "../helpers/api_client";
+import { LOGIN_SCHEMA, RESET_PASSWORD_SCHEMA, SIGNUP_SCHEMA } from "../helpers/schemas";
 
 type ILoginPayload = InferType<typeof LOGIN_SCHEMA>;
 type ISignupPayload = InferType<typeof SIGNUP_SCHEMA>;
+type IResetPasswordPayload = InferType<typeof RESET_PASSWORD_SCHEMA>;
 
 class AuthService {
+  private path = '/auth';
+
   signup = async (payload: ISignupPayload) => {
-    const { email, password, ...rest } = payload;
-    return await supabase.auth.signUp({
-      email, password,
-      options: {
-        data: { ...rest }
-      }
-    });
+    return await ApiClient.post(`${this.path}/signup`, payload);
   }
 
   login = async (payload: ILoginPayload) => {
-    return await supabase.auth.signInWithPassword(payload);
+    return await ApiClient.post(`${this.path}/login`, payload);
   }
 
-  getSession = async () => {
-    return await supabase.auth.getSession();
-  }
-
-  signOut = async () => {
-    return await supabase.auth.signOut();
+  resetPassword = async (payload: IResetPasswordPayload) => {
+    return await ApiClient.post(`${this.path}/reset-password`, payload);
   }
 }
 

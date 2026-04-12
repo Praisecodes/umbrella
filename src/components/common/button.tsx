@@ -27,7 +27,7 @@ const Button: React.FC<Props> = (props) => {
         style={[
           styles.button,
           {
-            borderRadius: getMetrics(rounded ? 100 : 5),
+            borderRadius: getMetrics(rounded ? 100 : 8),
             borderWidth: getMetrics(outline ? 1 : 0),
           }
         ]}

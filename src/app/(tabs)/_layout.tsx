@@ -4,9 +4,9 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 
 const Layout = () => {
-  const { user, session } = useUserStore();
+  const { user } = useUserStore();
 
-  if (!user || !session) return <Redirect href={"/(auth)/login"} />
+  if (!user) return <Redirect href={"/(auth)/login"} />
 
   return (
     <Tabs

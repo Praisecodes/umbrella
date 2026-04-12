@@ -6,9 +6,11 @@ import { Dispatch, SetStateAction } from "react";
 import { Dimensions, PixelRatio, Platform } from "react-native";
 import { toast } from "sonner-native";
 import { AnyObject, ObjectSchema, ValidationError } from "yup";
+import { userService } from "../services";
 import { getData } from "../stores/async_storage";
-import { useAppSettings, useUserStore } from "../stores/zustand";
-import { EXPO_PUBLIC_ONBOARDED_KEY, EXPO_PUBLIC_SUPABASE_KEY, EXPO_PUBLIC_SUPABASE_URL } from "./env";
+import { getSecureData } from "../stores/expo_secure_store";
+import { useAppSettings } from "../stores/zustand";
+import { EXPO_PUBLIC_ACCESS_TOKEN_KEY, EXPO_PUBLIC_ONBOARDED_KEY, EXPO_PUBLIC_SUPABASE_KEY, EXPO_PUBLIC_SUPABASE_URL } from "./env";
 
 const { width: WIDTH, height: HEIGHT } = Dimensions.get("window");
 
@@ -57,20 +59,15 @@ const supabase = createClient(
 
 const runOnLoad = async () => {
   const { setOnboarded } = useAppSettings.getState();
-  const { setUser, setSession } = useUserStore.getState();
 
   setOnboarded(!!await getData(EXPO_PUBLIC_ONBOARDED_KEY));
-  const { data, error } = await supabase.auth.getSession();
+  const token = await getSecureData(EXPO_PUBLIC_ACCESS_TOKEN_KEY);
 
-  if (error) {
-    toast.error(error.message);
-  } else {
-    const user = data.session?.user.user_metadata;
-    const session = data.session;
-
-    if (!!user && !!session) {
-      setUser(user as IUser);
-      setSession(session);
+  if (!!token) {
+    try {
+      await userService.getSession();
+    } catch (error) {
+      console.log("Error getting session:", JSON.stringify(error, null, 2));
     }
   }
 

@@ -1,64 +1,43 @@
 import { Button, HText, Input, Text } from "@/src/components/common";
 import { LOGIN_SCHEMA } from "@/src/helpers/schemas";
-import { getMetrics, handleFormTextChange, supabase, validateForm } from "@/src/helpers/utils";
+import { getMetrics, handleFormTextChange, validateForm } from "@/src/helpers/utils";
 import AuthLayout from "@/src/layouts/auth";
 import { authService } from "@/src/services";
-import { useUserStore } from "@/src/stores/zustand";
-import { router } from "expo-router";
+import { useMutation } from "@tanstack/react-query";
+import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { toast } from "sonner-native";
 import { InferType } from "yup";
 
 type ILoginSchema = InferType<typeof LOGIN_SCHEMA>;
 
 export default function Login() {
-  const { setSession, setUser } = useUserStore(state => state);
+  const { email, password } = useLocalSearchParams<Record<string, string>>();
   const [payload, setPayload] = useState<ILoginSchema>({
-    email: "",
-    password: "",
+    email: email ?? "",
+    password: password ?? ""
   });
-  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleForgotPassword = async () => { }
+  const { mutate, isPending } = useMutation({
+    mutationFn: authService.login,
+    onSuccess: ({ data }) => {
+    },
+    onError: () => { }
+  });
+
+  const handleForgotPassword = async () => {
+    router.navigate({
+      pathname: "/(auth)/forgot_password",
+      params: { email: payload.email }
+    });
+  }
 
   const handleLogin = async () => {
-    setLoading(true);
-
-    try {
-      await validateForm(LOGIN_SCHEMA, payload,
-        async () => {
-          const { data, error } = await authService.login(payload);
-
-          if (!!error) {
-            const err = error;
-            switch (err.code) {
-              case "email_not_confirmed":
-                const { error } = await supabase.auth.signInWithOtp(payload);
-                if (error) {
-                  toast.error(error.message);
-                  return;
-                }
-
-                router.replace({
-                  pathname: "/(auth)/otp",
-                  params: { email: payload.email }
-                });
-                break;
-              default:
-            }
-
-            toast.error(err.message);
-            return;
-          }
-
-          setUser(data.user.user_metadata as IUser);
-          setSession(data.session);
-        },
-      )
-    } finally {
-      setLoading(false);
-    }
+    await validateForm(LOGIN_SCHEMA, payload,
+      async () => {
+        mutate(payload);
+      },
+    )
   }
 
   const handleCreateAccount = () => {
@@ -106,7 +85,7 @@ export default function Login() {
           <Button
             text="LOG IN"
             onPress={handleLogin}
-            loading={loading}
+            loading={isPending}
           />
 
           <TouchableOpacity onPress={handleCreateAccount}>

@@ -1,12 +1,16 @@
 interface IUser {
+  id: string,
   email: string,
-  email_verified: boolean,
   firstName: string,
   lastName: string,
-  phone_verified: boolean,
-  sub: string,
   username: string,
+  emailVerified: boolean,
+  createdAt: string,
+  updatedAt: string,
+  clients: IClient[],
 }
+
+interface IClient { }
 
 interface IUserPreferences {
 
@@ -20,4 +24,11 @@ interface IErrorResponse {
   message: string;
   data: any;
   status: string;
+}
+
+interface IResponse {
+  statusCode: number,
+  message: string,
+  data: any | null,
+  errors?: string[]
 }

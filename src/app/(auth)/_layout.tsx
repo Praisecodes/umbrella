@@ -3,9 +3,9 @@ import { Redirect, Stack } from 'expo-router';
 import React from 'react';
 
 const Layout = () => {
-  const { user, session } = useUserStore();
+  const user = useUserStore(state => state.user);
 
-  if (!!user && !!session) return <Redirect href={"/(tabs)/home"} />
+  if (!!user && user.emailVerified) return <Redirect href={"/(tabs)/home"} />
 
   return (
     <Stack

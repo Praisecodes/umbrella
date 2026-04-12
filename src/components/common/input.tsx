@@ -28,10 +28,10 @@ const Input: React.FC<Props> = (props) => {
       <View
         style={{
           paddingHorizontal: getMetrics(8),
-          borderRadius: getMetrics(5),
+          borderRadius: getMetrics(8),
           gap: getMetrics(10),
         }}
-        className={`flex border ${alt && "bg-dark-a10"} border-dark-a50 ${rest.readOnly && "opacity-60"} flex-row items-center`}
+        className={`flex border ${alt && "bg-primary-a3"} border-primary-a30 ${rest.readOnly && "opacity-60"} flex-row items-center`}
       >
         {!!iconLeft && iconLeft}
 

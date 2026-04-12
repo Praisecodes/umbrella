@@ -1,56 +1,44 @@
+import { VERIFY_OTP_SCHEMA } from '@/src/helpers/schemas';
+import { otpService } from '@/src/services';
+import { OTPTypes } from '@/types';
+import { useMutation } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { toast } from 'sonner-native';
-import { string, ValidationError } from 'yup';
 import { Button, HText, Input, Text } from '../../components/common';
-import { getMetrics, supabase } from '../../helpers/utils';
+import { getMetrics, validateForm } from '../../helpers/utils';
 import AuthLayout from '../../layouts/auth';
-import { useUserStore } from '../../stores/zustand';
 
 const Otp = () => {
-  const { email } = useLocalSearchParams();
+  const { email, type } = useLocalSearchParams();
   const [otp, setOtp] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const { setUser, setSession } = useUserStore();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: otpService.verifyOTP,
+    onSuccess: ({ data }, { email, type }) => {
+      console.log("Data from OTP Verification", JSON.stringify(data.data, null, 2));
+      if (type === OTPTypes.RESET) {
+        router.replace({
+          pathname: "/(auth)/forgot_password/new_password",
+          params: { email, token: data.data.sessionToken }
+        });
+      }
+    },
+    onError: () => { },
+  });
 
   const handleVerfifyOtp = async () => {
-    try {
-      setLoading(true);
-      await string()
-        .required("Enter the OTP in your mailbox to continue")
-        .length(6, "OTP must be 6 digits")
-        .validate(otp, { abortEarly: false });
-
-      const { data, error } = await supabase.auth.verifyOtp({
-        email: email as string,
-        token: otp,
-        type: 'email'
-      });
-
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-
-      // Use the data returned, here
-      const user = data.user?.user_metadata;
-      const session = data.session;
-
-      if (!!user && !!session) {
-        setUser(user as IUser);
-        setSession(session);
-        router.replace("/(tabs)/home");
-      } else {
-        router.replace("/(auth)/login");
-      }
-    } catch (error) {
-      if (error instanceof ValidationError) {
-        toast.error(error.errors.join("\n"));
-      }
-    } finally {
-      setLoading(false);
+    const payload = {
+      email: email as string,
+      otp,
+      type: type as OTPTypes
     }
+
+    await validateForm(VERIFY_OTP_SCHEMA, payload,
+      async () => {
+        mutate(payload);
+      },
+    );
   }
 
   return (
@@ -66,8 +54,8 @@ const Otp = () => {
         </View>
 
         <Input
-          placeholder='e.g. 123456'
-          maxLength={6}
+          placeholder='e.g. 1234'
+          maxLength={4}
           keyboardType='numeric'
           value={otp}
           onChangeText={setOtp}
@@ -77,7 +65,7 @@ const Otp = () => {
       <Button
         text='VERIFY OTP'
         onPress={handleVerfifyOtp}
-        loading={loading}
+        loading={isPending}
         disabled={!otp}
       />
     </AuthLayout>
